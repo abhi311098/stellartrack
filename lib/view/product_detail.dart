@@ -8,7 +8,7 @@ import 'package:stellartrack/widget/cached_image.dart';
 import 'package:stellartrack/widget/circular_loader.dart';
 import 'package:stellartrack/widget/text_design.dart';
 
-import '../model/product_list_model.dart';
+import '../model/product_detail_model.dart';
 import '../utils/const/color_const.dart';
 import '../utils/const/text_const.dart';
 import '../widget/space.dart';
@@ -18,18 +18,17 @@ class ProductDetail extends StatelessWidget {
 
   ProductDetail({Key? key, this.id}) : super(key: key);
 
-  double? width;
-
   ///Bottom Navigation Design(Add to cart and buy now)
   _bottomNav(BuildContext context) {
     return Consumer<ProductDetailViewModel>(
       builder: (_, data, __) {
         if (data.loading) {
-          return Container();
+          return Space(height: 71,);
         } else if (data.userError != null) {
-          return Container();
+          return Space(height: 71,);
         }
-      return Space(
+        double width = MediaQuery.of(context).size.width;
+        return Space(
         height: 71,
         child: Column(
           children: [
@@ -42,9 +41,9 @@ class ProductDetail extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Container(
-                  width: width! * 0.5,
+                  width: width * 0.5,
                   padding: EdgeInsets.symmetric(
-                    horizontal: width! * 0.02,
+                    horizontal: width * 0.02,
                   ),
                   height: 70,
                   alignment: Alignment.center,
@@ -57,9 +56,9 @@ class ProductDetail extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  width: width! * 0.5,
+                  width: width * 0.5,
                   padding: EdgeInsets.symmetric(
-                    horizontal: width! * 0.02,
+                    horizontal: width * 0.02,
                   ),
                   height: 70,
                   color: Colors.orange,
@@ -81,11 +80,11 @@ class ProductDetail extends StatelessWidget {
     );
   }
 
+  late ProductDetailViewModel productDetailViewModel;
+
   @override
   Widget build(BuildContext context) {
-    width = MediaQuery.of(context).size.width;
-    print("id $id");
-    ProductDetailViewModel productDetailViewModel =
+    productDetailViewModel =
         Provider.of<ProductDetailViewModel>(context, listen: false);
     productDetailViewModel.getProductDetail(id!);
     return Scaffold(
@@ -102,7 +101,7 @@ class ProductDetail extends StatelessWidget {
                         "Error"),
               );
             }
-            return _ui(productDetailViewModel, context);
+            return _ui(data.productDetailModel!, context);
           },
         ),
       ),
@@ -110,7 +109,7 @@ class ProductDetail extends StatelessWidget {
   }
 
   ///Image, Title, Rating, Price
-  _ui(ProductDetailViewModel productDetailViewModel, BuildContext context) {
+  _ui(ProductDetailModel productDetailModel, BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -119,7 +118,7 @@ class ProductDetail extends StatelessWidget {
             CachedImage(
               width: double.infinity,
               heigth: 250,
-              imageUrl: productDetailViewModel.productDetailModel!.image,
+              imageUrl: productDetailModel.image,
             ),
             Positioned(
               left: 10,
@@ -144,7 +143,7 @@ class ProductDetail extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextDesign(
-                text: productDetailViewModel.productDetailModel!.title,
+                text: productDetailModel.title,
                 fontWeight: FontWeight.bold,
                 fontSize: 24,
               ),
@@ -154,8 +153,7 @@ class ProductDetail extends StatelessWidget {
               Row(
                 children: [
                   RatingBarIndicator(
-                    rating: productDetailViewModel
-                        .productDetailModel!.rating!.rate!
+                    rating: productDetailModel.rating!.rate!
                         .toDouble(),
                     itemBuilder: (context, index) => const Icon(
                       Icons.star,
@@ -168,7 +166,7 @@ class ProductDetail extends StatelessWidget {
                   TextDesign(
                       maxLines: 2,
                       text:
-                          " (${productDetailViewModel.productDetailModel!.rating?.count})",
+                          " (${productDetailModel.rating?.count})",
                       fontSize: 20,
                       fontWeight: FontWeight.normal),
                 ],
@@ -178,17 +176,17 @@ class ProductDetail extends StatelessWidget {
               ),
               TextDesign(
                   maxLines: 2,
-                  text: "\$${productDetailViewModel.productDetailModel!.price}",
+                  text: "\$${productDetailModel.price}",
                   fontSize: 25,
                   fontWeight: FontWeight.bold),
             ],
           ),
         ),
-        productDetailViewModel.productDetailModel!.description == "" ||
-                productDetailViewModel.productDetailModel!.description == null
+        productDetailModel.description == "" ||
+                productDetailModel.description == null
             ? Container()
             : _description(
-                productDetailViewModel.productDetailModel!.description),
+                productDetailModel.description),
       ],
     );
   }

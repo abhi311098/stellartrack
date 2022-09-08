@@ -10,7 +10,7 @@ import '../utils/const/api_collection.dart';
 
 class ProductDetailViewModel with ChangeNotifier {
 
-  bool _loading = false;
+  bool _loading = true;
   ProductDetailModel? _productDetailModel;
   UserError? _userError;
 
